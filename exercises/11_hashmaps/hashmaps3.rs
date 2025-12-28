@@ -27,27 +27,33 @@ fn build_scores_table(results: &str) -> HashMap<&str, TeamScores> {
         let team_1_score: u8 = split_iterator.next().unwrap().parse().unwrap();
         let team_2_score: u8 = split_iterator.next().unwrap().parse().unwrap();
 
-        let team_1_score_old = scores.get_mut(team_1_name);
-        match team_1_score_old {
-            Some(score) => {
-                score.goals_scored += team_1_score;
-                score.goals_conceded += team_2_score;
-            },
-            None => {
-                scores.insert(team_1_name, TeamScores { goals_scored: team_1_score, goals_conceded: team_2_score });
-            }
-        }
 
 
-        let team_2_score_old = scores.get_mut(team_2_name);
-        match team_2_score_old {
-            Some(score) => {
-                score.goals_scored += team_2_score;
-                score.goals_conceded += team_1_score;
-            },
-            None => {
-                scores.insert(team_2_name, TeamScores { goals_scored: team_2_score, goals_conceded: team_1_score });
-            }
+        
+        // scores.insert(team_2_name, TeamScores { goals_scored: team_2_score, goals_conceded: team_1_score });
+        scores = insert_or_update_scores(scores, team_1_name, team_1_score, team_2_score);
+        scores = insert_or_update_scores(scores, team_2_name, team_2_score, team_1_score);
+    }
+
+    scores
+}
+
+fn insert_or_update_scores<'a>(
+    scores: HashMap::<&'a str, TeamScores>,
+    team_name: &'a str,
+    scored: u8,
+    conceded: u8
+) -> HashMap::<&'a str, TeamScores> {
+    let mut scores = scores;
+    let team_1_score_old = scores.get_mut(team_name);
+
+    match team_1_score_old {
+        Some(score) => {
+            score.goals_scored = score.goals_scored + scored;
+            score.goals_conceded = score.goals_conceded + conceded;
+        },
+        None => {
+            scores.insert(team_name, TeamScores { goals_scored: scored, goals_conceded: conceded });
         }
     }
 
