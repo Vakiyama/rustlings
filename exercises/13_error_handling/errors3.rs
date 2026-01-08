@@ -23,9 +23,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cost = total_cost(pretend_user_input)?;
 
     if cost > tokens {
-        Ok(println!("You can't afford that many!"))
+        println!("You can't afford that many!");
+        Ok(())
     } else {
         tokens -= cost;
-        Ok(println!("You now have {tokens} tokens."))
+        println!("You now have {tokens} tokens.");
+        Ok(())
     }
 }
